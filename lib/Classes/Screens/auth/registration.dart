@@ -77,7 +77,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         controller: _controller.contFirstName,
                         prefixIcon: Icons.person,
 
-                        validator: (v) => _controller.validateEmail(v ?? ""),
+                        validator:
+                            (v) => _controller.validateFirstName(v ?? ""),
                         onSuffixTap: () {
                           // Handle visibility toggle (you can manage state)
                         },
@@ -103,11 +104,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   children: [
                     Expanded(
                       child: CustomTextField(
-                        hintText: "Code",
-                        controller: _controller.contEmail,
-                        prefixIcon: Icons.person,
+                        hintText: "+91",
+                        controller: _controller.contPhoneNumberCode,
+                        prefixIcon: Icons.code,
+                        keyboardType: TextInputType.number,
 
-                        // validator: (v) => _controller.validateEmail(v ?? ""),
+                        validator:
+                            (v) => _controller.validatePhoneNumberCode(v ?? ""),
                         onSuffixTap: () {
                           // Handle visibility toggle (you can manage state)
                         },
@@ -115,6 +118,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     SizedBox(width: 6),
                     Expanded(
+                      flex: 2,
                       child: CustomTextField(
                         hintText: "Phone",
                         controller: _controller.contPhoneNumber,
@@ -134,7 +138,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   hintText: "Email",
                   controller: _controller.contEmail,
                   prefixIcon: Icons.email,
-
+                  keyboardType: TextInputType.emailAddress,
                   validator: (v) => _controller.validateEmail(v ?? ""),
                   onSuffixTap: () {
                     // Handle visibility toggle (you can manage state)
@@ -178,7 +182,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   },
                 ),
                 CustomButton(
-                  text: 'Login',
+                  text: 'Create Account',
                   textColor: AppColor().kAppWhiteColor,
                   textFontWidth: 16.0,
                   color: AppColor().kAppPrimaryColor,

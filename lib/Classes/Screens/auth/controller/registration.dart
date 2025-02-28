@@ -7,6 +7,7 @@ class RegistrationFormController {
   final TextEditingController contEmail = TextEditingController();
   final TextEditingController contGender = TextEditingController();
   final TextEditingController contPhoneNumber = TextEditingController();
+  final TextEditingController contPhoneNumberCode = TextEditingController();
   final TextEditingController contDOB = TextEditingController();
   final TextEditingController contAddress = TextEditingController();
   final TextEditingController contCountry = TextEditingController();
@@ -45,6 +46,17 @@ class RegistrationFormController {
     if (!RegExp(r"^[a-zA-Z]+$").hasMatch(value)) {
       return "Last name can only contain alphabets.";
     }
+    return null;
+  }
+
+  // Last name
+  String? validatePhoneNumberCode(String value) {
+    value = value.trim();
+
+    if (value.isEmpty) {
+      return "Code cannot be empty.";
+    }
+
     return null;
   }
 
@@ -113,6 +125,7 @@ class RegistrationFormController {
   }
 
   // validate password
+  // Validate password
   String? validatePassword(String value) {
     value = value.trim();
 
@@ -124,6 +137,9 @@ class RegistrationFormController {
     }
     if (!RegExp(r'[A-Za-z]').hasMatch(value)) {
       return "Password must contain at least one letter.";
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return "Password must contain at least one uppercase letter.";
     }
     if (!RegExp(r'\d').hasMatch(value)) {
       return "Password must contain at least one number.";
