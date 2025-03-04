@@ -188,7 +188,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   color: AppColor().kAppPrimaryColor,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      customLog('All clear');
+                      if (_controller.contPassword.text !=
+                          _controller.contConfirmPassword.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Password and confirm password should be same.",
+                            ),
+                          ),
+                        );
+                      } else {
+                        customLog('All clear');
+                      }
                     }
                   },
                 ),

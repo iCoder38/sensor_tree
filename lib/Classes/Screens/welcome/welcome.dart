@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sensor_tree/Classes/Screens/auth/login.dart';
 import 'package:sensor_tree/Classes/Screens/auth/registration.dart';
+import 'package:sensor_tree/Classes/Screens/bluetooth_list/bluetooth_list.dart';
 import 'package:sensor_tree/Classes/Utils/resources/resources.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -120,6 +121,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                     ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BluetoothListScreen(),
+                        ),
+                      );
+                    },
+                    child: customText("Bluetooth files", 16.0, context),
                   ),
                 ],
               ),

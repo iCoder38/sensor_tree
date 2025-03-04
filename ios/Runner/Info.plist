@@ -28,6 +28,11 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>App needs Bluetooth access to find nearby devices</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>App needs Bluetooth access to communicate with devices</string>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

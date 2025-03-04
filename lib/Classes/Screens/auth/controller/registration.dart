@@ -84,9 +84,9 @@ class RegistrationFormController {
     if (value.isEmpty) {
       return "Phone number cannot be empty.";
     }
-    if (value.length != 12) {
-      // Ensures exactly 12 digits
-      return "Phone number must be exactly 12 digits.";
+    if (value.length != 10) {
+      // Ensures exactly 10 digits
+      return "Phone number must be exactly 10 digits.";
     }
     if (!RegExp(r"^[0-9]+$").hasMatch(value)) {
       // Ensure only numbers
