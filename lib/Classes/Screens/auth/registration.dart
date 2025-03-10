@@ -1,3 +1,6 @@
+import 'package:sensor_tree/Classes/Service/end_point.dart';
+import 'package:sensor_tree/Classes/Service/payloads.dart';
+import 'package:sensor_tree/Classes/Service/service.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -104,13 +107,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   children: [
                     Expanded(
                       child: CustomTextField(
+                        readOnly: true,
                         hintText: "+91",
                         controller: _controller.contPhoneNumberCode,
                         prefixIcon: Icons.code,
                         keyboardType: TextInputType.number,
 
-                        validator:
-                            (v) => _controller.validatePhoneNumberCode(v ?? ""),
+                        /*validator:
+                            (v) => _controller.validatePhoneNumberCode(v ?? ""),*/
                         onSuffixTap: () {
                           // Handle visibility toggle (you can manage state)
                         },
@@ -199,6 +203,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         );
                       } else {
                         customLog('All clear');
+                        // dismiss keyboard
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        callRegistrationWB(context);
                       }
                     }
                   },
@@ -241,5 +248,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() {
       termsAccepted = newValue;
     });
+  }
+
+  // ====================== API ================================================
+  // ====================== REGISTRATION
+  Future<void> callRegistrationWB(context) async {
+    Map<String, dynamic> response = await ApiService().postRequest(
+      ApiEndPoint().kEndPointRegistration,
+      ApiPayloads.payloadRegistration(
+        _controller.contFirstName.text.toString(),
+        _controller.contLastName.text.toString(),
+        _controller.contEmail.text.toString(),
+        _controller.contPassword.text.toString(),
+        _controller.contPhoneNumber.text.toString(),
+      ),
+    );
+
+    if (response['status'] == true) {
+      customLog("Registration successfull");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(response['message'])));
+    } else {
+      customLog("Failed: ${response['error']}");
+      customLog("Registration failed");
+    }
   }
 }

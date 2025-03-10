@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
+  final bool readOnly;
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final bool obscureText;
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     required this.hintText,
+    this.readOnly = false,
     this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
@@ -27,6 +29,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly,
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,

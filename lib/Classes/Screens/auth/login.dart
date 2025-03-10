@@ -1,4 +1,7 @@
 import 'package:sensor_tree/Classes/Screens/auth/registration.dart';
+import 'package:sensor_tree/Classes/Service/end_point.dart';
+import 'package:sensor_tree/Classes/Service/payloads.dart';
+import 'package:sensor_tree/Classes/Service/service.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -106,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       customLog('All clear');
+                      callLoginWB(context);
                     }
                   },
                 ),
@@ -178,5 +182,27 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       termsAccepted = newValue;
     });
+  }
+
+  // ====================== API ================================================
+  // ====================== LOGIN
+  Future<void> callLoginWB(context) async {
+    Map<String, dynamic> response = await ApiService().postRequest(
+      ApiEndPoint().kEndPointLogin,
+      ApiPayloads.payloadLogin(
+        _controller.contEmail.text.toString(),
+        _controller.contPassword.text.toString(),
+      ),
+    );
+
+    if (response['status'] == true) {
+      customLog("Login successfull");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(response['message'])));
+    } else {
+      customLog("Failed to view stories: ${response['error']}");
+      customLog("Login failed");
+    }
   }
 }
