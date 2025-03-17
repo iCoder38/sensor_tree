@@ -41,4 +41,17 @@ class ApiPayloads {
       'mobile': mobile,
     };
   }
+
+  // send OTP via reg
+  static Map<String, dynamic> payloadSendRegsitrationOTP(
+    String name,
+    String email,
+  ) {
+    return {'name': name, 'email': email};
+  }
+
+  // verify OTP via reg
+  static Map<String, dynamic> payloadVerifyRegistration(String email) {
+    return {'email': email};
+  }
 }

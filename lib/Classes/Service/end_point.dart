@@ -3,4 +3,5 @@ class ApiEndPoint {
   String kEndPointRegistration = 'register';
   String kEndPointForgotPassword = 'forgot-password';
   String kEndPointResetPassword = 'reset-password';
+  String kEndPointSendOTPtoVerifyEmail = 'send-otp-to-verify-email';
 }

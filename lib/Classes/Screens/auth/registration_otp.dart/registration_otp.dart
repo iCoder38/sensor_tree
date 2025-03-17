@@ -1,14 +1,16 @@
-import 'package:sensor_tree/Classes/Screens/auth/otp.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class RegistrationOtpScreen extends StatefulWidget {
+  const RegistrationOtpScreen({super.key, required this.getEmail});
+
+  final String getEmail;
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<RegistrationOtpScreen> createState() => _RegistrationOtpScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _RegistrationOtpScreenState extends State<RegistrationOtpScreen> {
   // controller
   final _formKey = GlobalKey<FormState>();
   final LoginFormController _controller = LoginFormController();
@@ -16,12 +18,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool isPasswordShow = false;
   // terms checkbox
   bool termsAccepted = false;
+  // code is
+  String codeIs = '';
   final List<String> images = [
     'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _UIKit(context));
+    return Scaffold();
   }
 
   Widget _UIKit(BuildContext context) {
@@ -56,29 +60,47 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 SizedBox(height: 10),
                 customText(
-                  AppText().kTextForgotPassword,
+                  AppText().kTextITOVerification,
                   22.0,
                   context,
                   fontWeight: FontWeight.w700,
                   lightModeColor: AppColor().kAppPrimaryColor,
                 ),
                 customText(
-                  AppText().kTextForgotPasswordMessage,
+                  AppText().kTextITOVerificationMessage,
                   14.0,
                   context,
                   fontWeight: FontWeight.w400,
                   lightModeColor: AppColor().kAppBlackColor,
                 ),
                 SizedBox(height: 20),
-                CustomTextField(
-                  hintText: "Email",
-                  controller: _controller.contEmail,
-                  prefixIcon: Icons.email,
-
-                  validator: (v) => _controller.validateEmail(v ?? ""),
-                  onSuffixTap: () {
-                    // Handle visibility toggle (you can manage state)
+                OtpTextField(
+                  numberOfFields: 4,
+                  fieldWidth: 50,
+                  borderColor: Color.fromARGB(255, 70, 7, 216),
+                  fillColor: Colors.black,
+                  enabledBorderColor: Colors.black,
+                  //set to true to show as box or false to show as dash
+                  showFieldAsBox: true,
+                  //runs when a code is typed in
+                  onCodeChanged: (String code) {
+                    //handle validation or checks here
+                    customLog("Code==> $code");
                   },
+                  //runs when every textfield is filled
+                  onSubmit: (String verificationCode) {
+                    codeIs = verificationCode;
+                    setState(() {});
+                    /*showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Verification Code"),
+                          content: Text('Code entered is $verificationCode'),
+                        );
+                      },
+                    );*/
+                  }, // end onSubmit
                 ),
                 SizedBox(height: 20),
 
@@ -90,8 +112,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       customLog('All clear');
-                      // dismiss keyboard
-                      FocusScope.of(context).requestFocus(FocusNode());
                       callForgotPasswordWB(context);
                     }
                   },
@@ -122,14 +142,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   // ====================== API ================================================
-  // ====================== FORGOT PASSWORD
+  // ====================== REGISTER OTP
   Future<void> callForgotPasswordWB(context) async {
     showLoadingUI(context, 'Please wait...');
+    // dismiss keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
     Map<String, dynamic> response = await ApiService().postRequest(
-      ApiEndPoint().kEndPointForgotPassword,
-      ApiPayloads.payloadForgotPassword(_controller.contEmail.text.toString()),
+      ApiEndPoint().kEndPointResetPassword,
+      ApiPayloads.payloadOTP(
+        codeIs.toString(),
+        widget.getEmail,
+        _controller.contPassword.text.toString(),
+      ),
     );
-    customLog(response);
+
     if (response['status'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -139,24 +165,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
       // dismiss alert
       Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) =>
-                  OTPScreen(getEmail: _controller.contEmail.text.toString()),
-        ),
-      );
-    } else {
-      customLog("Status is false");
-      // dismiss alert
+      // back
       Navigator.pop(context);
+      Navigator.pop(context);
+    } else {
+      customLog("Failed to otp: ${response['error']}");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response['message']),
-          backgroundColor: AppColor().kAppRedAColor,
+          backgroundColor: Colors.redAccent,
         ),
       );
+      // dismiss alert
+      Navigator.pop(context);
     }
   }
 }

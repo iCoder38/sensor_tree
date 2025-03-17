@@ -1,7 +1,4 @@
-import 'package:sensor_tree/Classes/Service/end_point.dart';
-import 'package:sensor_tree/Classes/Service/payloads.dart';
-import 'package:sensor_tree/Classes/Service/service.dart';
-import 'package:sensor_tree/Classes/Utils/custom/loading.dart';
+import 'package:sensor_tree/Classes/Screens/auth/registration_otp.dart/registration_otp.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -276,9 +273,44 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       );
       // dismiss alert
+      // Navigator.pop(context);
+      // push
+      sendOTPtomail(context);
+    } else {
+      customLog("Failed: ${response['error']}");
+      customLog("Registration failed");
+    }
+  }
+
+  Future<void> sendOTPtomail(context) async {
+    // showLoadingUI(context, 'Please wait...');
+    Map<String, dynamic> response = await ApiService().postRequest(
+      ApiEndPoint().kEndPointSendOTPtoVerifyEmail,
+      ApiPayloads.payloadSendRegsitrationOTP(
+        _controller.contFirstName.text.toString(),
+        _controller.contEmail.text.toString(),
+      ),
+    );
+
+    if (response['status'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Colors.greenAccent,
+        ),
+      );
+      // dismiss alert
       Navigator.pop(context);
-      // pop back
-      Navigator.pop(context);
+      // push
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => RegistrationOtpScreen(
+                getEmail: _controller.contEmail.text.toString(),
+              ),
+        ),
+      );
     } else {
       customLog("Failed: ${response['error']}");
       customLog("Registration failed");
