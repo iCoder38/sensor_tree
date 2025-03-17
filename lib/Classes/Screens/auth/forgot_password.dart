@@ -1,4 +1,5 @@
 import 'package:sensor_tree/Classes/Screens/auth/otp.dart';
+import 'package:sensor_tree/Classes/Utils/custom/loading.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -90,10 +91,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       customLog('All clear');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => OTPScreen()),
-                      );
+                      // dismiss keyboard
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      callForgotPasswordWB(context);
                     }
                   },
                 ),
@@ -120,5 +120,44 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
       ),
     );
+  }
+
+  // ====================== API ================================================
+  // ====================== FORGOT PASSWORD
+  Future<void> callForgotPasswordWB(context) async {
+    showLoadingUI(context, 'Please wait...');
+    Map<String, dynamic> response = await ApiService().postRequest(
+      ApiEndPoint().kEndPointForgotPassword,
+      ApiPayloads.payloadForgotPassword(_controller.contEmail.text.toString()),
+    );
+    customLog(response);
+    if (response['status'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: AppColor().kAppPrimaryColor,
+        ),
+      );
+      // dismiss alert
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  OTPScreen(getEmail: _controller.contEmail.text.toString()),
+        ),
+      );
+    } else {
+      customLog("Status is false");
+      // dismiss alert
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: AppColor().kAppRedAColor,
+        ),
+      );
+    }
   }
 }

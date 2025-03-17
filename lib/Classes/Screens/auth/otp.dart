@@ -1,7 +1,9 @@
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({super.key});
+  const OTPScreen({super.key, required this.getEmail});
+
+  final String getEmail;
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -15,6 +17,8 @@ class _OTPScreenState extends State<OTPScreen> {
   bool isPasswordShow = false;
   // terms checkbox
   bool termsAccepted = false;
+  // code is
+  String codeIs = '';
   final List<String> images = [
     'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
   ];
@@ -84,7 +88,9 @@ class _OTPScreenState extends State<OTPScreen> {
                   },
                   //runs when every textfield is filled
                   onSubmit: (String verificationCode) {
-                    showDialog(
+                    codeIs = verificationCode;
+                    setState(() {});
+                    /*showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -92,10 +98,29 @@ class _OTPScreenState extends State<OTPScreen> {
                           content: Text('Code entered is $verificationCode'),
                         );
                       },
-                    );
+                    );*/
                   }, // end onSubmit
                 ),
                 SizedBox(height: 20),
+
+                SizedBox(height: 20),
+                CustomTextField(
+                  hintText: "Password",
+                  controller: _controller.contPassword,
+                  obscureText: isPasswordShow ? false : true,
+                  prefixIcon: Icons.lock,
+                  suffixIcon:
+                      isPasswordShow ? Icons.visibility_off : Icons.visibility,
+                  validator: (v) => _controller.validatePassword(v ?? ""),
+                  onSuffixTap: () {
+                    if (isPasswordShow == true) {
+                      isPasswordShow = false;
+                    } else {
+                      isPasswordShow = true;
+                    }
+                    setState(() {});
+                  },
+                ),
 
                 CustomButton(
                   text: 'Next',
@@ -105,6 +130,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       customLog('All clear');
+                      callForgotPasswordWB(context);
                     }
                   },
                 ),
@@ -131,5 +157,45 @@ class _OTPScreenState extends State<OTPScreen> {
         ),
       ),
     );
+  }
+
+  // ====================== API ================================================
+  // ====================== OTP
+  Future<void> callForgotPasswordWB(context) async {
+    showLoadingUI(context, 'Please wait...');
+    // dismiss keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+    Map<String, dynamic> response = await ApiService().postRequest(
+      ApiEndPoint().kEndPointResetPassword,
+      ApiPayloads.payloadOTP(
+        codeIs.toString(),
+        widget.getEmail,
+        _controller.contPassword.text.toString(),
+      ),
+    );
+
+    if (response['status'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: AppColor().kAppPrimaryColor,
+        ),
+      );
+      // dismiss alert
+      Navigator.pop(context);
+      // back
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } else {
+      customLog("Failed to otp: ${response['error']}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      // dismiss alert
+      Navigator.pop(context);
+    }
   }
 }

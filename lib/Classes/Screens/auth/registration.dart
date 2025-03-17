@@ -1,6 +1,7 @@
 import 'package:sensor_tree/Classes/Service/end_point.dart';
 import 'package:sensor_tree/Classes/Service/payloads.dart';
 import 'package:sensor_tree/Classes/Service/service.dart';
+import 'package:sensor_tree/Classes/Utils/custom/loading.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -253,6 +254,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // ====================== API ================================================
   // ====================== REGISTRATION
   Future<void> callRegistrationWB(context) async {
+    showLoadingUI(context, 'Please wait...');
     Map<String, dynamic> response = await ApiService().postRequest(
       ApiEndPoint().kEndPointRegistration,
       ApiPayloads.payloadRegistration(
@@ -260,15 +262,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _controller.contLastName.text.toString(),
         _controller.contEmail.text.toString(),
         _controller.contPassword.text.toString(),
+        _controller.contConfirmPassword.text.toString(),
         _controller.contPhoneNumber.text.toString(),
       ),
     );
 
     if (response['status'] == true) {
       customLog("Registration successfull");
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(response['message'])));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Colors.greenAccent,
+        ),
+      );
+      // dismiss alert
+      Navigator.pop(context);
+      // pop back
+      Navigator.pop(context);
     } else {
       customLog("Failed: ${response['error']}");
       customLog("Registration failed");

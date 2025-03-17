@@ -15,12 +15,15 @@ class AppText {
   String kTextWelcome = "Welcome";
   String kSignInMessage = "Sign In to your account.";
   String kSignUpMessage = "Enter details to create your account.";
+  // shared pref: remember me
+  String kRememberMeKey = "isLoggedIn";
 }
 
 class AppColor {
   Color kAppPrimaryColor = Colors.blueAccent;
   Color kAppBlackColor = Colors.black;
   Color kAppWhiteColor = Colors.white;
+  Color kAppRedAColor = Colors.redAccent;
 }
 
 // FONTS

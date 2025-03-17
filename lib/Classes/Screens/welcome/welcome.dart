@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:sensor_tree/Classes/Screens/auth/login.dart';
-import 'package:sensor_tree/Classes/Screens/auth/registration.dart';
-import 'package:sensor_tree/Classes/Screens/bluetooth_list/bluetooth_list.dart';
-import 'package:sensor_tree/Classes/Utils/resources/resources.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -12,6 +9,27 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void checkStatus() async {
+    Map<String, dynamic> response = await getBoolWithResponse(
+      AppText().kRememberMeKey,
+    );
+
+    if (response['success']) {
+      if (kDebugMode) {
+        print('✅ Success: ${response['message']}, Value: ${response['value']}');
+      }
+    } else {
+      if (kDebugMode) {
+        print('❌ Error: ${response['message']}');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,7 +1,3 @@
-import 'package:sensor_tree/Classes/Screens/auth/registration.dart';
-import 'package:sensor_tree/Classes/Service/end_point.dart';
-import 'package:sensor_tree/Classes/Service/payloads.dart';
-import 'package:sensor_tree/Classes/Service/service.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,6 +18,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final List<String> images = [
     'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: _UIKit(context));
@@ -179,8 +181,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleCheckBoxChanged(bool newValue) {
     customLog(newValue);
-    setState(() {
+    setState(() async {
       termsAccepted = newValue;
+      if (newValue) {
+        await deleteBool(AppText().kRememberMeKey);
+      } else {
+        await storeBool(AppText().kRememberMeKey, true);
+      }
     });
   }
 
@@ -197,9 +204,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response['status'] == true) {
       customLog("Login successfull");
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(response['message'])));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: AppColor().kAppPrimaryColor,
+        ),
+      );
     } else {
       customLog("Failed to view stories: ${response['error']}");
       customLog("Login failed");

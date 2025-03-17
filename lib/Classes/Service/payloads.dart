@@ -9,12 +9,27 @@ class ApiPayloads {
     return {'email': email, 'password': password};
   }
 
+  // forgot password
+  static Map<String, dynamic> payloadForgotPassword(String email) {
+    return {'email': email};
+  }
+
+  // otp
+  static Map<String, dynamic> payloadOTP(
+    String otp,
+    String email,
+    String password,
+  ) {
+    return {'otp': otp, 'email': email, 'password': password};
+  }
+
   // registration
   static Map<String, dynamic> payloadRegistration(
     String firstname,
     String lastname,
     String email,
     String password,
+    String password_confirmation,
     String mobile,
   ) {
     return {
@@ -22,6 +37,7 @@ class ApiPayloads {
       'lastname': lastname,
       'email': email,
       'password': password,
+      'password_confirmation': password_confirmation,
       'mobile': mobile,
     };
   }
