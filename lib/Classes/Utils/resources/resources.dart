@@ -9,6 +9,8 @@ class AppText {
   String kTextWelcom = "Welcome to";
   String kTextForgotPassword = "Forgot your password?";
   String kTextForgotPasswordMessage = "Enter email to receive OTP";
+
+  String kTextITEmailVerification = "Email Verification";
   String kTextITOVerification = "OTP Verification";
   String kTextITOVerificationMessage = "Please enter the 4 digits code.";
 

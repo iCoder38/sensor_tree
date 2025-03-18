@@ -10,15 +10,12 @@ class ApiService {
   Future<Map<String, dynamic>> postRequest(
     String endpoint,
     Map<String, dynamic> payload, {
-    bool useFormData = false, // If true, sends data as FormData
+    bool useFormData = false,
   }) async {
     try {
       Response response = await _dio.post(
         endpoint,
-        data:
-            useFormData
-                ? FormData.fromMap(payload)
-                : payload, // ✅ Send as JSON by default
+        data: useFormData ? FormData.fromMap(payload) : payload,
       );
       return response.data;
     } on DioException catch (e) {

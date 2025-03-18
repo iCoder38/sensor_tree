@@ -25,7 +25,7 @@ class _RegistrationOtpScreenState extends State<RegistrationOtpScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(body: _UIKit(context));
   }
 
   Widget _UIKit(BuildContext context) {
@@ -60,7 +60,7 @@ class _RegistrationOtpScreenState extends State<RegistrationOtpScreen> {
                 ),
                 SizedBox(height: 10),
                 customText(
-                  AppText().kTextITOVerification,
+                  AppText().kTextITEmailVerification,
                   22.0,
                   context,
                   fontWeight: FontWeight.w700,
@@ -142,17 +142,16 @@ class _RegistrationOtpScreenState extends State<RegistrationOtpScreen> {
   }
 
   // ====================== API ================================================
-  // ====================== REGISTER OTP
+  // ====================== VERIFY REGISTER OTP
   Future<void> callForgotPasswordWB(context) async {
     showLoadingUI(context, 'Please wait...');
     // dismiss keyboard
     FocusScope.of(context).requestFocus(FocusNode());
     Map<String, dynamic> response = await ApiService().postRequest(
-      ApiEndPoint().kEndPointResetPassword,
-      ApiPayloads.payloadOTP(
+      ApiEndPoint().kEndPointVerifyRegisterEmail,
+      ApiPayloads.payloadVerifyEmailAfterReg(
         codeIs.toString(),
         widget.getEmail,
-        _controller.contPassword.text.toString(),
       ),
     );
 

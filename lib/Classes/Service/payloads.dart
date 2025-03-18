@@ -54,4 +54,12 @@ class ApiPayloads {
   static Map<String, dynamic> payloadVerifyRegistration(String email) {
     return {'email': email};
   }
+
+  // verify email
+  static Map<String, dynamic> payloadVerifyEmailAfterReg(
+    String otp,
+    String email,
+  ) {
+    return {'otp': otp, 'email': email};
+  }
 }

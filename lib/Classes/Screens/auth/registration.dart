@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sensor_tree/Classes/Screens/auth/registration_otp.dart/registration_otp.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
@@ -203,7 +205,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         customLog('All clear');
                         // dismiss keyboard
                         FocusScope.of(context).requestFocus(FocusNode());
-                        callRegistrationWB(context);
+                        callCheckBeforeRegistration(context);
                       }
                     }
                   },
@@ -250,8 +252,51 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   // ====================== API ================================================
   // ====================== REGISTRATION
-  Future<void> callRegistrationWB(context) async {
+
+  Future<void> callCheckBeforeRegistration(context) async {
     showLoadingUI(context, 'Please wait...');
+    Map<String, dynamic> response = await ApiService().postRequest(
+      ApiEndPoint().kEndPointSendOTPtoVerifyEmail,
+      ApiPayloads.payloadSendRegsitrationOTP(
+        _controller.contFirstName.text.toString() +
+            _controller.contLastName.text.toString(),
+        _controller.contEmail.text.toString(),
+      ),
+    );
+
+    if (response['status'] == true) {
+      customLog("OTP Registration successfull");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Colors.greenAccent,
+        ),
+      );
+      // dismiss alert
+      // Navigator.pop(context);
+      // push
+      callRegistrationWB(context);
+      (context);
+    } else {
+      customLog("Failed: ${response['error']}");
+      customLog("Registration failed");
+      // dismiss alert
+      Navigator.pop(context);
+
+      /*Map<String, dynamic> errorData = response;
+      customLog(errorData);*/
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['errors']['email'][0]),
+          backgroundColor: Colors.greenAccent,
+        ),
+      );
+    }
+  }
+
+  Future<void> callRegistrationWB(context) async {
+    // showLoadingUI(context, 'Please wait...');
     Map<String, dynamic> response = await ApiService().postRequest(
       ApiEndPoint().kEndPointRegistration,
       ApiPayloads.payloadRegistration(
@@ -266,33 +311,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     if (response['status'] == true) {
       customLog("Registration successfull");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response['message']),
-          backgroundColor: Colors.greenAccent,
-        ),
-      );
-      // dismiss alert
-      // Navigator.pop(context);
-      // push
-      sendOTPtomail(context);
-    } else {
-      customLog("Failed: ${response['error']}");
-      customLog("Registration failed");
-    }
-  }
-
-  Future<void> sendOTPtomail(context) async {
-    // showLoadingUI(context, 'Please wait...');
-    Map<String, dynamic> response = await ApiService().postRequest(
-      ApiEndPoint().kEndPointSendOTPtoVerifyEmail,
-      ApiPayloads.payloadSendRegsitrationOTP(
-        _controller.contFirstName.text.toString(),
-        _controller.contEmail.text.toString(),
-      ),
-    );
-
-    if (response['status'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response['message']),
