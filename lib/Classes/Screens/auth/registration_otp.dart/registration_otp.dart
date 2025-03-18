@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationOtpScreen extends StatefulWidget {
@@ -169,9 +168,10 @@ class _RegistrationOtpScreenState extends State<RegistrationOtpScreen> {
       Navigator.pop(context);
     } else {
       customLog("Failed to otp: ${response['error']}");
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response['message']),
+          content: Text("Something went wrong."),
           backgroundColor: Colors.redAccent,
         ),
       );

@@ -283,13 +283,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       // dismiss alert
       Navigator.pop(context);
 
-      /*Map<String, dynamic> errorData = response;
-      customLog(errorData);*/
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response['errors']['email'][0]),
-          backgroundColor: Colors.greenAccent,
+          content: customText("The email has already been taken.", 14, context),
+          backgroundColor: Colors.redAccent,
         ),
       );
     }
