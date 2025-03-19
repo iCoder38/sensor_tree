@@ -1,10 +1,10 @@
-import 'dart:convert';
-
 import 'package:sensor_tree/Classes/Screens/auth/registration_otp.dart/registration_otp.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key});
+  const RegistrationScreen({super.key, required this.images});
+
+  final List<String> images;
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -18,9 +18,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isPasswordShow = false;
   // terms checkbox
   bool termsAccepted = false;
-  final List<String> images = [
-    'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
-  ];
+  List<String> images = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // init
+    images = widget.images;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: _UIKit(context));
@@ -323,6 +329,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           builder:
               (context) => RegistrationOtpScreen(
                 getEmail: _controller.contEmail.text.toString(),
+                images: images,
               ),
         ),
       );

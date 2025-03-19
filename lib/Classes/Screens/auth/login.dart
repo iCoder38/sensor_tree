@@ -1,7 +1,9 @@
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.images});
+
+  final List<String> images;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -15,13 +17,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordShow = false;
   // terms checkbox
   bool termsAccepted = false;
-  final List<String> images = [
-    'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
-  ];
+  List<String> images = [];
 
   @override
   void initState() {
     super.initState();
+    // init
+    images = widget.images;
   }
 
   @override
@@ -129,7 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ForgotPasswordScreen(),
+                            builder:
+                                (context) =>
+                                    ForgotPasswordScreen(images: images),
                           ),
                         );
                       },
@@ -154,7 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => RegistrationScreen(),
+                                  builder:
+                                      (context) =>
+                                          RegistrationScreen(images: images),
                                 ),
                               );
                             },

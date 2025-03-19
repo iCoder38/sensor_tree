@@ -2,7 +2,9 @@ import 'package:sensor_tree/Classes/Screens/auth/otp.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+  const ForgotPasswordScreen({super.key, required this.images});
+
+  final List<String> images;
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -16,9 +18,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool isPasswordShow = false;
   // terms checkbox
   bool termsAccepted = false;
-  final List<String> images = [
-    'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
-  ];
+  List<String> images = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // init
+    images = widget.images;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: _UIKit(context));
@@ -143,8 +151,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         context,
         MaterialPageRoute(
           builder:
-              (context) =>
-                  OTPScreen(getEmail: _controller.contEmail.text.toString()),
+              (context) => OTPScreen(
+                getEmail: _controller.contEmail.text.toString(),
+                images: images,
+              ),
         ),
       );
     } else {

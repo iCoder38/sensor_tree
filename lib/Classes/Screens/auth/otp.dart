@@ -1,9 +1,10 @@
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({super.key, required this.getEmail});
+  const OTPScreen({super.key, required this.getEmail, required this.images});
 
   final String getEmail;
+  final List<String> images;
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -19,9 +20,15 @@ class _OTPScreenState extends State<OTPScreen> {
   bool termsAccepted = false;
   // code is
   String codeIs = '';
-  final List<String> images = [
-    'https://via.placeholder.com/400x240/FF5733/FFFFFF?text=Image+1',
-  ];
+  List<String> images = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // init
+    images = widget.images;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: _UIKit(context));

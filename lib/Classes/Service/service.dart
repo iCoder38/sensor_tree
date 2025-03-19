@@ -1,4 +1,3 @@
-// import 'package:anamak/features/Services/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sensor_tree/Classes/Service/api_client.dart';
@@ -36,6 +35,19 @@ class ApiService {
         endpoint,
         queryParameters: queryParams,
       );
+      return response.data;
+    } on DioException catch (e) {
+      _handleDioError(e);
+      return {'success': false, 'error': e.message};
+    } catch (e) {
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+  // ✅ GET Request Without Parameters
+  Future<Map<String, dynamic>> getRequestWithoutParams(String endpoint) async {
+    try {
+      Response response = await _dio.get(endpoint);
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);

@@ -33,16 +33,16 @@ class _ImageCarouselState extends State<ImageCarousel> {
             itemBuilder: (context, index) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                /*child: Image.network(
+                child: Image.network(
                   widget.images[index],
                   width: double.infinity,
-                  fit: BoxFit.cover,
-                ),*/
-                child: Image.asset(
+                  fit: BoxFit.fitWidth,
+                ),
+                /*child: Image.asset(
                   'assets/images/banner.png',
                   width: double.infinity,
                   fit: BoxFit.cover,
-                ),
+                ),*/
               );
             },
           ),
