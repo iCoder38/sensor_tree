@@ -1,4 +1,5 @@
 import 'package:sensor_tree/Classes/Screens/auth/registration_otp.dart/registration_otp.dart';
+import 'package:sensor_tree/Classes/Utils/country_codes/country_codes.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -24,6 +25,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // terms checkbox
   bool termsAccepted = false;
   List<String> images = [];
+
+  // country codes
+  String selectedCountry = 'No country selected';
+  int phoneLength = 0;
 
   @override
   void initState() {
@@ -133,8 +138,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                         /*validator:
                             (v) => _controller.validatePhoneNumberCode(v ?? ""),*/
-                        onSuffixTap: () {
-                          // Handle visibility toggle (you can manage state)
+                        onTap: () {
+                          openCountrySelector();
                         },
                       ),
                     ),
@@ -258,6 +263,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void openCountrySelector() {
+    showCountrySelectorBottomSheet(
+      context: context,
+
+      onCountrySelected: (
+        String countryName,
+        int length,
+        String flagIcon,
+        String phoneNumberCode,
+      ) {
+        setState(() {
+          selectedCountry = countryName;
+          customLog(selectedCountry);
+          phoneLength = length;
+          _controller.contPhoneNumberCode.text = phoneNumberCode;
+          // flagIcons = flagIcon;
+          // customLog(flagIcon);
+          // enteredPhoneNumberLength = phoneNumberCode;
+          // customLog(selectedCountryPhoneCode.toString());
+          // flagIcons = flagIcon.toString();
+          // storeCountryName
+        });
+      },
     );
   }
 

@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onSuffixTap;
   final Color borderColor;
   final String? Function(String?)? validator;
+  final GestureTapCallback? onTap; // Optional onTap parameter
 
   const CustomTextField({
     super.key,
@@ -23,7 +24,8 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.onSuffixTap,
     this.borderColor = Colors.black,
-    this.validator, // Accept validator function
+    this.validator,
+    this.onTap, // Initialize onTap
   });
 
   @override
@@ -33,7 +35,8 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      validator: validator, // Apply validator function
+      validator: validator,
+      onTap: onTap, // Assign onTap to TextFormField's onTap
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey),
