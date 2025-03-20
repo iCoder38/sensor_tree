@@ -11,6 +11,8 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   List<String> storeImages = [];
   bool screenLoader = true;
+  // slogan text
+  String sloganText = '';
   @override
   void initState() {
     super.initState();
@@ -91,7 +93,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder:
-                                (context) => LoginScreen(images: storeImages),
+                                (context) => LoginScreen(
+                                  images: storeImages,
+                                  sloganText: sloganText,
+                                ),
                           ),
                         );
                       },
@@ -123,6 +128,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                     builder:
                                         (context) => RegistrationScreen(
                                           images: storeImages,
+                                          sloganText: sloganText,
                                         ),
                                   ),
                                 );
@@ -167,7 +173,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   // ====================== API ================================================
-  // ====================== SLIDER
+  // ==================== SLIDER
   Future<void> callSliderWB(context) async {
     Map<String, dynamic> response = await ApiService().getRequestWithoutParams(
       ApiEndPoint().kEndPointSlider,
@@ -175,6 +181,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if (response['status'] == true) {
       customLog("Slider successfull");
       storeImages = List<String>.from(response['images']);
+      sloganText = response['slogan']['value'].toString();
+
       setState(() {
         screenLoader = false;
       });

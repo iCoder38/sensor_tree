@@ -2,9 +2,14 @@ import 'package:sensor_tree/Classes/Screens/auth/otp.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key, required this.images});
+  const ForgotPasswordScreen({
+    super.key,
+    required this.images,
+    required this.sloganText,
+  });
 
   final List<String> images;
+  final String sloganText;
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -61,6 +66,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       fit: BoxFit.cover,
                     ),
                   ),
+                ),
+                customText(
+                  widget.sloganText,
+                  14.0,
+                  context,
+                  fontWeight: FontWeight.w700,
+                  lightModeColor: AppColor().kAppBlackColor,
                 ),
                 SizedBox(height: 10),
                 customText(
@@ -153,6 +165,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           builder:
               (context) => OTPScreen(
                 getEmail: _controller.contEmail.text.toString(),
+                sloganText: widget.sloganText,
                 images: images,
               ),
         ),

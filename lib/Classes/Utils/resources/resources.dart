@@ -28,6 +28,11 @@ class AppColor {
   Color kAppRedAColor = Colors.redAccent;
 }
 
+class AppImages {
+  String kImageGroup327 = "assets/images/Group 327.png";
+  String kImageGroup451 = "assets/images/Group 451.png";
+}
+
 // FONTS
 class FontFamiltyNameUtils {
   var fontOrbitron = 'o';

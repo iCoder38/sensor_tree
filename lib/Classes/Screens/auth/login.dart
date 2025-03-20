@@ -1,9 +1,14 @@
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.images});
+  const LoginScreen({
+    super.key,
+    required this.images,
+    required this.sloganText,
+  });
 
   final List<String> images;
+  final String sloganText;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -56,10 +61,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.transparent,
                   child: Center(
                     child: Image.asset(
-                      'assets/images/Group 327.png',
+                      AppImages().kImageGroup327,
                       fit: BoxFit.cover,
                     ),
                   ),
+                ),
+                customText(
+                  widget.sloganText,
+                  14.0,
+                  context,
+                  fontWeight: FontWeight.w700,
+                  lightModeColor: AppColor().kAppBlackColor,
                 ),
                 SizedBox(height: 10),
                 customText(
@@ -132,8 +144,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           context,
                           MaterialPageRoute(
                             builder:
-                                (context) =>
-                                    ForgotPasswordScreen(images: images),
+                                (context) => ForgotPasswordScreen(
+                                  images: images,
+                                  sloganText: widget.sloganText,
+                                ),
                           ),
                         );
                       },
@@ -159,8 +173,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder:
-                                      (context) =>
-                                          RegistrationScreen(images: images),
+                                      (context) => RegistrationScreen(
+                                        images: images,
+                                        sloganText: widget.sloganText,
+                                      ),
                                 ),
                               );
                             },

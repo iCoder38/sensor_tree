@@ -2,9 +2,14 @@ import 'package:sensor_tree/Classes/Screens/auth/registration_otp.dart/registrat
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key, required this.images});
+  const RegistrationScreen({
+    super.key,
+    required this.images,
+    required this.sloganText,
+  });
 
   final List<String> images;
+  final String sloganText;
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -61,6 +66,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       fit: BoxFit.cover,
                     ),
                   ),
+                ),
+                customText(
+                  widget.sloganText,
+                  14.0,
+                  context,
+                  fontWeight: FontWeight.w700,
+                  lightModeColor: AppColor().kAppBlackColor,
                 ),
                 SizedBox(height: 10),
                 customText(

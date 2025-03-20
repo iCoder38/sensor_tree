@@ -1,10 +1,16 @@
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({super.key, required this.getEmail, required this.images});
+  const OTPScreen({
+    super.key,
+    required this.getEmail,
+    required this.images,
+    required this.sloganText,
+  });
 
   final String getEmail;
   final List<String> images;
+  final String sloganText;
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
