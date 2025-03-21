@@ -75,7 +75,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   color: Colors.black,
                   child: Center(
                     child: customText(
-                      "Welcome to sensor tree",
+                      "Welcome to ${AppText().appName}",
                       22,
                       context,
                       lightModeColor: AppColor().kAppWhiteColor,
