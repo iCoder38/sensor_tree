@@ -29,3 +29,34 @@ Future<Map<String, dynamic>> getBoolWithResponse(String key) async {
     return {"success": true, "message": "Value retrieved", "value": value};
   }
 }
+
+// TOKEN
+// ✅ Store token
+Future<void> storeToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString("token", token);
+}
+
+// ✅ Get token
+Future<String?> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString("token");
+}
+
+// ✅ Delete token
+Future<void> deleteToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove("token");
+}
+
+// ✅ Get token with response
+Future<Map<String, dynamic>> getTokenWithResponse() async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString("token");
+
+  if (token == null || token.isEmpty) {
+    return {"success": false, "message": "Token not found", "token": ""};
+  } else {
+    return {"success": true, "message": "Token retrieved", "token": token};
+  }
+}

@@ -5,16 +5,22 @@ import 'package:sensor_tree/Classes/Service/api_client.dart';
 class ApiService {
   final Dio _dio = ApiClient().dio;
 
-  // ✅ Generic POST Request (Handles both JSON & FormData)
+  // ✅ Generic POST Request
   Future<Map<String, dynamic>> postRequest(
     String endpoint,
     Map<String, dynamic> payload, {
     bool useFormData = false,
+    String? token,
   }) async {
     try {
+      Options options = Options(
+        headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+      );
+
       Response response = await _dio.post(
         endpoint,
         data: useFormData ? FormData.fromMap(payload) : payload,
+        options: options,
       );
       return response.data;
     } on DioException catch (e) {
@@ -25,15 +31,21 @@ class ApiService {
     }
   }
 
-  // ✅ Generic GET Request (With Query Parameters)
+  // ✅ Generic GET Request
   Future<Map<String, dynamic>> getRequest(
     String endpoint,
-    Map<String, dynamic> queryParams,
-  ) async {
+    Map<String, dynamic> queryParams, {
+    String? token,
+  }) async {
     try {
+      Options options = Options(
+        headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+      );
+
       Response response = await _dio.get(
         endpoint,
         queryParameters: queryParams,
+        options: options,
       );
       return response.data;
     } on DioException catch (e) {
@@ -44,10 +56,17 @@ class ApiService {
     }
   }
 
-  // ✅ GET Request Without Parameters
-  Future<Map<String, dynamic>> getRequestWithoutParams(String endpoint) async {
+  // ✅ GET Request Without Params
+  Future<Map<String, dynamic>> getRequestWithoutParams(
+    String endpoint, {
+    String? token,
+  }) async {
     try {
-      Response response = await _dio.get(endpoint);
+      Options options = Options(
+        headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+      );
+
+      Response response = await _dio.get(endpoint, options: options);
       return response.data;
     } on DioException catch (e) {
       _handleDioError(e);
@@ -57,7 +76,7 @@ class ApiService {
     }
   }
 
-  // 🔥 Handles Dio errors centrally
+  // 🔥 Central Error Handler
   void _handleDioError(DioException e) {
     if (kDebugMode) {
       print("❌ Dio Error: ${e.response?.statusCode} - ${e.message}");

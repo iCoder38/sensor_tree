@@ -13,12 +13,13 @@ class ApiClient {
   ApiClient._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: BaseURL().baseUrl, // ✅ Make sure baseUrl is correctly set
+        baseUrl: BaseURL().baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
           'Content-Type': 'application/json',
-        }, // ✅ Use JSON for all requests
+          'Accept': 'application/json',
+        },
       ),
     );
 

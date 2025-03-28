@@ -9,4 +9,6 @@ class ApiEndPoint {
   String kEndPointSendOTPtoVerifyEmail = 'send-otp-to-verify-email';
 
   String kEndPointVerifyRegisterEmail = 'verify-email-via-otp';
+
+  String kEndPointHome = 'home';
 }

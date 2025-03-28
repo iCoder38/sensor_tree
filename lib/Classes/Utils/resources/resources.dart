@@ -19,6 +19,8 @@ class AppText {
   String kSignUpMessage = "Enter details to create your account.";
   // shared pref: remember me
   String kRememberMeKey = "isLoggedIn";
+
+  String kTextHome = "Home";
 }
 
 class AppColor {
@@ -26,6 +28,7 @@ class AppColor {
   Color kAppBlackColor = Colors.black;
   Color kAppWhiteColor = Colors.white;
   Color kAppRedAColor = Colors.redAccent;
+  Color kAppNavigationColor = Color.fromRGBO(88, 130, 168, 1);
 }
 
 class AppImages {

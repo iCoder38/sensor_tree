@@ -202,13 +202,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleCheckBoxChanged(bool newValue) {
-    customLog(newValue);
-    setState(() async {
+    customLog("New value: ==> $newValue");
+    setState(() {
       termsAccepted = newValue;
       if (newValue) {
-        await deleteBool(AppText().kRememberMeKey);
+        storeBool(AppText().kRememberMeKey, true);
       } else {
-        await storeBool(AppText().kRememberMeKey, true);
+        deleteBool(AppText().kRememberMeKey);
       }
     });
   }
@@ -232,6 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: AppColor().kAppPrimaryColor,
         ),
       );
+      // store token
+      await storeToken(response['token'].toString());
     } else {
       customLog("Failed to view stories: ${response['error']}");
       customLog("Login failed");

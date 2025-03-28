@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:sensor_tree/Classes/Screens/home/home.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -16,11 +17,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    // slider api
-    callSliderWB(context);
+
+    // remember me
+    checkStatus(context);
   }
 
-  void checkStatus() async {
+  void checkStatus(context) async {
     Map<String, dynamic> response = await getBoolWithResponse(
       AppText().kRememberMeKey,
     );
@@ -28,11 +30,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if (response['success']) {
       if (kDebugMode) {
         print('✅ Success: ${response['message']}, Value: ${response['value']}');
-      }
+      } // slider api
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+      /*Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  LoginScreen(images: storeImages, sloganText: sloganText),
+        ),
+      );*/
     } else {
       if (kDebugMode) {
         print('❌ Error: ${response['message']}');
-      }
+      } // slider api
+      callSliderWB(context);
     }
   }
 
@@ -179,7 +194,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ApiEndPoint().kEndPointSlider,
     );
     if (response['status'] == true) {
-      customLog("Slider successfull");
+      // customLog("Slider successfull");
       storeImages = List<String>.from(response['images']);
       sloganText = response['slogan']['value'].toString();
 
