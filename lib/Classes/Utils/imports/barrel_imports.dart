@@ -23,3 +23,4 @@ export 'package:sensor_tree/Classes/Screens/bluetooth_list/bluetooth_list.dart';
 export 'package:sensor_tree/Classes/Utils/custom/loading.dart';
 export 'package:sensor_tree/Classes/Utils/custom/app_bar.dart';
 export 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
+export 'package:sensor_tree/Classes/Utils/custom/search.dart';
