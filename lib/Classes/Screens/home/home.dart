@@ -1,4 +1,3 @@
-import 'package:sensor_tree/Classes/Screens/home/sub_home/sub_home.dart';
 import 'package:sensor_tree/Classes/Utils/imports/barrel_imports.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,6 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               onPressed: () {
                 customLog("Bell ring");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BluetoothScannerScreen(),
+                  ),
+                );
               },
               icon: Icon(Icons.notifications_none),
             ),

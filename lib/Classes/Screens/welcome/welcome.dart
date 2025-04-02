@@ -173,7 +173,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BluetoothListScreen(),
+                        builder: (context) => BluetoothScannerScreen(),
                       ),
                     );
                   },

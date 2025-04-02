@@ -5,6 +5,9 @@ PODS:
   - flutter_blue_plus_darwin (0.0.2):
     - Flutter
     - FlutterMacOS
+  - geolocator_apple (1.2.0):
+    - Flutter
+    - FlutterMacOS
   - "otp_pin_field (1.2.0+2)":
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -27,6 +30,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_ble_peripheral (from `.symlinks/plugins/flutter_ble_peripheral/ios`)
   - flutter_blue_plus_darwin (from `.symlinks/plugins/flutter_blue_plus_darwin/darwin`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - otp_pin_field (from `.symlinks/plugins/otp_pin_field/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -45,6 +49,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_ble_peripheral/ios"
   flutter_blue_plus_darwin:
     :path: ".symlinks/plugins/flutter_blue_plus_darwin/darwin"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/darwin"
   otp_pin_field:
     :path: ".symlinks/plugins/otp_pin_field/ios"
   path_provider_foundation:
@@ -60,6 +66,7 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_ble_peripheral: e12ab87914fc1690b22bb26649e4f6698625f425
   flutter_blue_plus_darwin: 3ea4ec9133b377febcc8a70b28cd2d2dc9242bd9
+  geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
   otp_pin_field: 0f0935fafc56252e6a48a5a045ac689b6bad3857
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2

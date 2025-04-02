@@ -1,193 +1,239 @@
-import 'dart:typed_data';
+import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:sensor_tree/Classes/Utils/utils.dart';
-import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 
-class BluetoothListScreen extends StatefulWidget {
-  const BluetoothListScreen({super.key});
+class BluetoothScannerScreen extends StatefulWidget {
+  const BluetoothScannerScreen({super.key});
 
   @override
-  State<BluetoothListScreen> createState() => _BluetoothListScreenState();
+  State<BluetoothScannerScreen> createState() => _BluetoothScannerScreenState();
 }
 
-class _BluetoothListScreenState extends State<BluetoothListScreen> {
-  final FlutterBlePeripheral blePeripheral = FlutterBlePeripheral();
-  final AdvertiseData advertiseData = AdvertiseData(
-    includeDeviceName: true,
-    localName: "My Custom Device", // Set your custom name here
-    manufacturerId: 0x1234, // Example manufacturer ID
-    manufacturerData: Uint8List.fromList([1, 2, 3, 4]),
-  );
-
-  List<ScanResult> scanResults = [];
-  List<BluetoothDevice> connectedDevices = [];
+class _BluetoothScannerScreenState extends State<BluetoothScannerScreen> {
+  final FlutterReactiveBle _ble = FlutterReactiveBle();
+  final List<DiscoveredDevice> _devices = [];
+  StreamSubscription<DiscoveredDevice>? _scanSubscription;
+  bool _isScanning = false;
+  String _status = 'Press Search to begin';
+  String _error = '';
 
   @override
   void initState() {
     super.initState();
-    startScan();
-    checkConnectedDevices();
-    adver();
+    _checkLocationServices();
+    return;
+    _requestPermissions();
+    _checkBluetoothStatus();
   }
 
-  void adver() async {
-    await Future.delayed(Duration(milliseconds: 400));
-    startAdvertising(); // Start advertising so others can detect this device
-  }
-
-  void startAdvertising() async {
-    bool isSupported = await blePeripheral.isSupported;
-    if (isSupported) {
-      await blePeripheral.start(
-        advertiseData: advertiseData,
-      ); // Use named argument
-      customLog("Started Advertising as: My Custom Device");
+  Future<void> _checkLocationServices() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        customLog('Please enable GPS (location services).');
+        _error = 'Please enable GPS (location services).';
+      });
+      await Geolocator.openLocationSettings();
     } else {
-      customLog("Advertising not supported on this device");
+      customLog("ENABLED");
     }
   }
 
-  void stopAdvertising() async {
-    await blePeripheral.stop();
-    customLog("Stopped Advertising");
-  }
+  Future<void> _requestPermissions() async {
+    customLog("YES");
+    final status =
+        await [
+          Permission.locationWhenInUse, // Location permission
+          Permission.bluetoothScan, // Bluetooth scan permission
+          Permission.bluetoothConnect, // Bluetooth connect permission
+        ].request();
 
-  void startScan() {
-    scanResults.clear(); // Clear previous results
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 10));
-
-    FlutterBluePlus.scanResults.listen((results) {
-      if (!mounted) return; // ✅ Prevent setState if widget is disposed
+    // Check if the status of each permission is denied and handle accordingly
+    if (status[Permission.locationWhenInUse] != null &&
+        status[Permission.locationWhenInUse]!.isDenied) {
       setState(() {
-        scanResults = results;
+        _error = 'Location permission not granted.';
       });
-      // customLog(scanResults);
-    });
+      // If location is denied, guide the user to settings
+      openAppSettings();
+    }
+
+    if (status[Permission.bluetoothScan] != null &&
+        status[Permission.bluetoothScan]!.isDenied) {
+      setState(() {
+        _error = 'Bluetooth scan permission not granted.';
+      });
+    }
+
+    if (status[Permission.bluetoothConnect] != null &&
+        status[Permission.bluetoothConnect]!.isDenied) {
+      setState(() {
+        _error = 'Bluetooth connect permission not granted.';
+      });
+    }
   }
 
-  void stopScan() {
-    FlutterBluePlus.stopScan();
+  Future<void> _checkBluetoothStatus() async {
+    final status = await _ble.status;
+    log("BLE status: $status");
+
+    if (status == BleStatus.ready) {
+      setState(() {
+        _status = 'Bluetooth is ready';
+      });
+    } else {
+      setState(() {
+        _error = 'Bluetooth not ready: $status';
+      });
+    }
+  }
+
+  Future<bool> _preparePermissionsAndGPS() async {
+    final permissions =
+        await [
+          Permission.bluetoothScan,
+          Permission.bluetoothConnect,
+          Permission.location,
+          Permission.locationAlways,
+          Permission.locationWhenInUse,
+        ].request();
+
+    if (permissions.values.any((p) => !p.isGranted)) {
+      setState(() {
+        _error = 'Permissions not granted';
+      });
+      if (permissions[Permission.locationWhenInUse]?.isDenied ?? false) {
+        // Ask user to enable Location Services
+        await openAppSettings();
+      }
+      return false;
+    }
+
+    final gpsEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!gpsEnabled) {
+      setState(() {
+        _error = 'Please enable GPS (location services)';
+      });
+      await Geolocator.openLocationSettings();
+      return false;
+    }
+
+    return true;
+  }
+
+  void _startScan() async {
+    if (_isScanning) {
+      _scanSubscription?.cancel();
+      setState(() {
+        _isScanning = false;
+        _status = 'Scan stopped';
+      });
+      return;
+    }
+
+    final ready = await _preparePermissionsAndGPS();
+    if (!ready) return;
+
+    setState(() {
+      _devices.clear();
+      _isScanning = true;
+      _status = 'Scanning...';
+      _error = '';
+    });
+
+    _scanSubscription = _ble
+        .scanForDevices(
+          withServices: [], // no filter
+          scanMode: ScanMode.lowLatency,
+        )
+        .listen(
+          (device) {
+            log('Found: ${device.name} (${device.id})');
+
+            if (device.name.isNotEmpty &&
+                !_devices.any((d) => d.id == device.id)) {
+              setState(() {
+                _devices.add(device);
+              });
+            }
+          },
+          onError: (e) {
+            setState(() {
+              _isScanning = false;
+              _error = 'Scan error: $e';
+            });
+          },
+        );
+
+    // Stop scan after 15 seconds
+    Future.delayed(const Duration(seconds: 15), () {
+      if (_isScanning) {
+        _scanSubscription?.cancel();
+        setState(() {
+          _isScanning = false;
+          _status = 'Scan complete';
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
-    FlutterBluePlus.stopScan();
-    stopAdvertising(); // Stop advertising when screen is disposed
+    _scanSubscription?.cancel();
     super.dispose();
-  }
-
-  /// Check already connected devices
-  void checkConnectedDevices() async {
-    List<BluetoothDevice> devices = FlutterBluePlus.connectedDevices;
-    setState(() {
-      connectedDevices = devices;
-    });
-    customLog("Connected devices: $connectedDevices");
-  }
-
-  /// Connect to a selected device
-  Future<void> connectToDevice(BluetoothDevice device) async {
-    try {
-      await device.connect();
-      await Future.delayed(Duration(seconds: 2)); // Wait for the name update
-
-      setState(() {
-        if (!connectedDevices.contains(device)) {
-          connectedDevices.add(device);
-        }
-      });
-
-      customLog("Connected to: ${device.name}");
-    } catch (e) {
-      customLog("Error connecting: $e");
-    }
-  }
-
-  /// Disconnect from a device
-  Future<void> disconnectFromDevice(BluetoothDevice device) async {
-    try {
-      await device.disconnect();
-      setState(() {
-        connectedDevices.remove(device);
-      });
-    } catch (e) {
-      customLog("Error disconnecting: $e");
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Bluetooth Devices")),
-      body: Column(
-        children: [
-          // Button to Start Scanning
-          ElevatedButton(onPressed: startScan, child: Text("Search Again")),
-
-          // List of Connected Devices
-          if (connectedDevices.isNotEmpty) ...[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Connected Devices",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+      appBar: AppBar(title: const Text('BLE Scanner')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: _startScan,
+              child: Text(_isScanning ? 'Stop Scan' : 'Search Nearby Devices'),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: connectedDevices.length,
-                itemBuilder: (context, index) {
-                  final device = connectedDevices[index];
-                  return ListTile(
-                    title: Text(
-                      device.name.isNotEmpty ? device.name : "Unknown Device",
-                    ),
-                    subtitle: Text(device.id.toString()),
-                    trailing: ElevatedButton(
-                      onPressed: () => disconnectFromDevice(device),
-                      child: Text("Disconnect"),
-                    ),
-                  );
-                },
+            const SizedBox(height: 12),
+            Text(_status, style: Theme.of(context).textTheme.bodyLarge),
+            if (_error.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                _error,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.red),
               ),
+            ],
+            const Divider(height: 32),
+            Expanded(
+              child:
+                  _devices.isEmpty
+                      ? Center(
+                        child: Text(
+                          _isScanning ? 'Scanning...' : 'No devices found',
+                        ),
+                      )
+                      : ListView.builder(
+                        itemCount: _devices.length,
+                        itemBuilder: (context, index) {
+                          final d = _devices[index];
+                          return ListTile(
+                            leading: const Icon(Icons.bluetooth),
+                            title: Text(d.name),
+                            subtitle: Text('ID: ${d.id}\nRSSI: ${d.rssi}'),
+                          );
+                        },
+                      ),
             ),
           ],
-
-          // List of Scanned Devices
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              "Available Devices",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: scanResults.length,
-              itemBuilder: (context, index) {
-                final result = scanResults[index];
-                final device = result.device;
-                final deviceName =
-                    result.advertisementData.localName.isNotEmpty
-                        ? result.advertisementData.localName
-                        : (device.name.isNotEmpty
-                            ? device.name
-                            : "Unknown Device");
-
-                return ListTile(
-                  title: Text(deviceName),
-                  subtitle: Text(device.id.toString()),
-                  trailing: ElevatedButton(
-                    onPressed: () => connectToDevice(device),
-                    child: Text("Connect"),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
